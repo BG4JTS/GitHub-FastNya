@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>GitHub FastNya 设置</title>
+  <style>
+    :root {
+      --main-bg: #f8f9fa;
+      --panel-bg: #fff;
+      --panel-blur: none;
+      --panel-border: 1px solid #eee;
+      --panel-shadow: 0 2px 8px #0001;
+    }
+    body.modern-theme {
+      --main-bg: #f8f9fa;
+      --panel-bg: #fff;
+      --panel-blur: none;
+      --panel-border: 1px solid #eee;
+      --panel-shadow: 0 2px 8px #0001;
+    }
+    body.glass-theme {
+      --main-bg: rgba(255,255,255,0.6);
+      --panel-bg: rgba(255,255,255,0.35);
+      --panel-blur: blur(12px);
+      --panel-border: 1.5px solid rgba(255,255,255,0.4);
+      --panel-shadow: 0 8px 32px 0 rgba(31,38,135,0.18);
+    }
+    body.dark-theme {
+      --main-bg: #181c20;
+      --panel-bg: #23272e;
+      --panel-blur: none;
+      --panel-border: 1.5px solid #222;
+      --panel-shadow: 0 8px 32px 0 rgba(0,0,0,0.25);
+      color: #eee;
+    }
+    body.dark-theme th { background: #23272e; color: #fff; }
+    body.dark-theme .ok { color: #6ee7b7; }
+    body.dark-theme .fail { color: #f87171; }
+    body.dark-theme .delay-low { background: #1e293b; }
+    body.dark-theme .delay-mid { background: #334155; }
+    body.dark-theme .delay-high { background: #7f1d1d; }
+    body.dark-theme .delay-veryhigh { background: #991b1b; }
+    body.dark-theme .delay-extreme { background: #dc2626; color: #fff; }
+
+    body.minimal-theme {
+      --main-bg: #fff;
+      --panel-bg: #fff;
+      --panel-blur: none;
+      --panel-border: 1px solid #eee;
+      --panel-shadow: none;
+      color: #222;
+    }
+    body.minimal-theme th { background: #fff; color: #222; }
+    body.minimal-theme .ok { color: #388e3c; }
+    body.minimal-theme .fail { color: #d32f2f; }
+    body {
+      background: var(--main-bg);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    #dropZone {
+      border: 2px dashed #aaa;
+      padding: 30px;
+      text-align: center;
+      margin: 30px 0 20px 0;
+      cursor: pointer;
+      background: var(--panel-bg);
+      backdrop-filter: var(--panel-blur);
+      border-radius: 8px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    #dropZone.dragover {
+      border-color: #0078d7;
+      background: #e3f1ff;
+    }
+    #chooseBtn {
+      margin-left: 8px;
+      padding: 6px 18px;
+      border: none;
+      background: #0078d7;
+      color: #fff;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 15px;
+      transition: background 0.2s;
+    }
+    #chooseBtn:hover {
+      background: #005fa3;
+    }
+    #progressContainer {
+      width: 100%;
+      background: var(--panel-bg);
+      backdrop-filter: var(--panel-blur);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    #progressBar {
+      height: 16px;
+      width: 0;
+      background: #4caf50;
+      transition: width 0.3s, background 0.3s;
+      border-radius: 8px;
+    }
+    #progressText {
+      margin-top: 2px;
+      font-size: 12px;
+      text-align: right;
+      color: #555;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--panel-bg);
+      backdrop-filter: var(--panel-blur);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--panel-shadow);
+    }
+    th, td {
+      border: 1px solid var(--panel-border);
+      padding: 6px 10px;
+      text-align: left;
+    }
+    th {
+      background: #f5f5f5;
+    }
+    .ok {
+      color: #388e3c;
+      font-weight: bold;
+    }
+    .fail {
+      color: #d32f2f;
+      font-weight: bold;
+    }
+    tr {
+      transition: background 0.2s;
+    }
+    .delay-low {
+      background: #e8f5e9;
+    }
+    .delay-mid {
+      background: #fffde7;
+    }
+    .delay-high {
+      background: #ffebee;
+    }
+    .delay-veryhigh {
+      background: #ffcdd2;
+    }
+    .delay-extreme {
+      background: #e53935;
+      color: #fff;
+    }
+    td.delay-cell {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h2>GitHub FastNya 节点设置</h2>
+  <div id="dropZone">拖拽你的 Proxy.txt 到这里，或 <button id="chooseBtn" type="button">点击选择</button><input type="file" id="fileInput" accept=".txt" style="display:none;"></div>
+  <div id="progressContainer" style="display:none; margin-bottom:10px;">
+    <div id="progressBar" style="height:16px;width:0;background:#4caf50;transition:width 0.3s;"></div>
+    <div id="progressText" style="margin-top:2px;font-size:12px;"></div>
+  </div>
+  <button id="pingBtn" style="display:none;">开始测速</button>
+  <table id="resultTable" style="display:none;">
+    <thead>
+      <tr><th>节点</th><th>延迟</th><th>状态</th><th>设为默认</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <div id="otherSettings">
+    <h3>其他设置</h3>
+    <label><input type="checkbox" id="autoSwitch"> 自动切换不可用节点</label>
+    <label style="display:block;margin:12px 0;">
+      <input type="checkbox" id="debugSwitch">
+      开启Debug模式（F12控制台输出详细日志）
+    </label>
+    <label style="display:block;margin:12px 0;">
+      <span>界面主题：</span>
+      <select id="themeSelect">
+        <option value="modern">现代风格</option>
+        <option value="glass">毛玻璃风格</option>
+        <option value="dark">暗黑风格</option>
+        <option value="minimal">极简风格</option>
+      </select>
+    </label>
+  </div>
+  <script src="options.js"></script>
+  <div style="margin-top:32px;text-align:center;">
+    <div style="font-size:15px;color:#888;margin-bottom:8px;">请我喝一杯 Java ☕</div>
+    <img src="IMG_2417.jpeg" alt="打赏码" style="max-width:320px;width:90%;border-radius:12px;box-shadow:0 2px 12px #0001;">
+    <div style="font-size:13px;color:#bbb;margin-top:6px;">BG4JTS 的赞赏码</div>
+  </div>
+  <div style="margin-top:16px;text-align:center;">
+    <h4>打赏的人都：</h4>
+    <ul style="list-style:none;padding:0;font-size:14px;color:#555;">
+      <li>1. 愿你微笑今日，快乐永远！</li>
+      <li>2. 祝你福寿安康。龙马精神。</li>
+      <li>3. 祝你锦绣前程，喜气洋洋。</li>
+      <li>4. 祝你四时如意，万事遂心。</li>
+      <li>5. 爱人永相伴，笑容永不变！</li>
+      <li>6. 祝你笑口常开，快乐常在。</li>
+      <li>7. 愿你好运常在，天天开心！</li>
+      <li>8. 愿你快乐不断，健康相伴!</li>
+      <li>9. 境由爱造，还是爱逐境迁。</li>
+      <li>10. 祝你工作顺利，天天开心。</li>
+      <li>11. 心宽容天下，精彩铸心魂。</li>
+      <li>12. 祝你玉树琼枝，龙腾凤翔。</li>
+      <li>13. 祝你幸福如意，心想事成。</li>
+      <li>14. 愿你万事大吉，好上加好！</li>
+      <li>15. 祝你生日快乐，幸福安康。</li>
+      <li>16. 祝你事业有成，幸福快乐。</li>
+      <li>17. 祝你天生一对，地造一双。</li>
+      <li>18. 愿你万事大吉，好上加好！</li>
+      <li>19. 世界再大，我眼里仅有你。</li>
+      <li>20. 快乐常相伴，健康永相随。</li>
+      <li>21. 祝你燕侣双俦，闺房和乐。</li>
+      <li>22. 一花一世界，一叶一追寻。</li>
+      <li>23. 子君诞辰时，亲人明媚心！</li>
+      <li>24. 回望旧时光，幸福有几何？</li>
+      <li>25. 鱼知水恩，乃幸福之源也。</li>
+      <li>26. 祝你春节快乐，幸福来到！</li>
+      <li>27. 祝你繁荣兴旺，一帆风顺。</li>
+      <li>28. 愿你无忧无烦，好运连连！</li>
+      <li>29. 愿你生活幸福，事事如愿!</li>
+      <li>30. 朋友，天冷了要保重身体。</li>
+      <li>31. 愿得一人心，白首不相离。</li>
+      <li>32. 开心无烦恼，顺心又顺意。</li>
+      <li>33. 愿你快乐相伴，如意围绕。</li>
+      <li>34. 福共海天长，与天地同寿。</li>
+      <li>35. 朋友如伞，伴你一路晴空！</li>
+      <li>36. 祝你天高地阔，人寿年丰。</li>
+      <li>37. 祝你财运亨通，吉祥如意！</li>
+      <li>38. 祝你生死挈阔，与子成说。</li>
+      <li>39. 祝你年年今日，岁岁今朝。</li>
+      <li>40. 神家中去，梦想变成真。</li>
+      <li>41. 祝你一人一心，白首不离。</li>
+      <li>42. 祝你天翔紫燕，地暖春风。</li>
+      <li>43. 祝你心有灵犀，一点就通。</li>
+      <li>44. 祝你莺歌燕舞，招财进宝。</li>
+      <li>45. 祝你生日快乐，健康幸福！</li>
+      <li>46. 我执你之手，与你共白头。</li>
+      <li>47. 快乐常相伴，健康永相随。</li>
+      <li>48. 朋友，天冷了要保重身体。</li>
+      <li>49. 祝你钟鼓乐之，鸳鸯比翼。</li>
+      <li>50. 这一生，我为你画地为牢。</li>
+      <li>51. 你是水，维系着我的生命。</li>
+      <li>52. 愿君开心快乐，健康幸福！</li>
+      <li>53. 金钱不胜数，干活不辛苦。</li>
+      <li>54. 祝你生活美丽工作顺利！</li>
+      <li>55. 祝你万事如意，大吉大利。</li>
+      <li>56. 祝你生日快乐，幸福安康。</li>
+      <li>57. 祝你幸福美满，官运亨通。</li>
+      <li>58. 祝你幸福永远，笑容灿烂。</li>
+      <li>59. 祝你天天开心，顺心顺意！</li>
+      <li>60. 祝你万事如意，鹏程万里。</li>
+      <li>61. 春去春又来，花谢花又开。</li>
+      <li>62. 祝你五谷丰登，迎春接福。</li>
+      <li>63. 愿新年带给你无边的幸福。</li>
+      <li>64. 我住长江头，君住长江尾。</li>
+      <li>65. 祝你我的未来，与你同在。</li>
+      <li>66. 天天好运道，日日福星照。</li>
+      <li>67. 祝你蒸蒸日上，身体健康。</li>
+      <li>68. 周末又来临，坚持好心境。</li>
+      <li>69. 感恩不是付出，而是收获。</li>
+      <li>70. 祝你前程似锦，好梦成真。</li>
+      <li>71. 祝你出入平安，龙马精神。</li>
+      <li>72. 相濡以沫，彼此牵手一生。</li>
+      <li>73. 祝你如意吉祥，万事胜意。</li>
+      <li>74. 祝你年年今日，岁岁今朝。</li>
+      <li>75. 愿你眉眼如初，岁月如故。</li>
+      <li>76. 祝你有情成眷，诗咏好逑。</li>
+      <li>77. 祝你万里春风，春回柳叶。</li>
+      <li>78. 地生连理枝，水出并头莲。</li>
+      <li>79. 事业正当午，身体壮如虎。</li>
+      <li>80. 祝你万事如意，紫气临门。</li>
+      <li>81. 简单问候到，快乐好心境。</li>
+      <li>82. 祝你心想事成，一帆风顺。</li>
+      <li>83. 走该走的路，见想见的人。</li>
+      <li>84. 祝你财运亨通，吉祥如意!</li>
+      <li>85. 祝你财源广进，恭贺新禧。</li>
+      <li>86. 祝你寿比南山，福如东海。</li>
+      <li>87. 祝你青春永驻，永远快乐！</li>
+      <li>88. 祝你生意兴隆，财源广进。</li>
+      <li>89. 共同度春秋，谱写新章篇。</li>
+      <li>90. 愿你快乐每一天，幸福永久!</li>
+      <li>91. 祝你年年今日，岁岁今朝。</li>
+      <li>92. 祝你幸福永远，笑容灿烂。</li>
+      <li>93. 祝你新春快乐，岁岁安怡！</li>
+      <li>94. 祝你荣华富贵，金玉满堂。</li>
+      <li>95. 我爱你，想要和你在一齐。</li>
+      <li>96. 祝你学高为师，德高为范。</li>
+      <li>97. 天天好运道，日日福星照。</li>
+      <li>98. 地生连理枝，水出并头莲。</li>
+      <li>99. 祝你春风得意，阖家安康。</li>
+      <li>100. 新的一年，祝你幸福平安！</li>
+    </ul>
+  </div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "GitHub加速喵",
+  "version": "1.0",
+  "description": "一个优雅的GitHub加速插件",
+  "options_page": "options.html",
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "GitHub加速 设置",
+    "default_icon": {
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "permissions": [
+    "contextMenus",
+    "activeTab",
+    "clipboardWrite",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://github.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "icons": {
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+} 
