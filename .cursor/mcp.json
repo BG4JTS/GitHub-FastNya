@@ -1,0 +1,14 @@
+{
+    "mcpServers": {
+        "github": {
+            "command": "gh",
+            "args": [
+                "mcp",
+                "serve"
+            ],
+            "env": {
+                "GITHUB_PERSONAL_ACCESS_TOKEN": "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"
+            }
+        }
+    }
+} 
